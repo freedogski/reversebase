@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Base Score</title>
+<style>
+:root{
+  --track-height:24px; /* ~80% of value box */
+  --thumb-size:26px;
+  --bg:#f5f7fb;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+}
+body{
+  margin:0;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  background:var(--bg);
+  padding:10px;
+}
+.card{
+  width:100%;
+  max-width:700px;
+  background:white;
+  border-radius:10px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.05);
+  padding:16px;
+  text-align:center;
+}
+.total-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:2px;
+  color:#000;
+}
+#baseScore{
+  width:80px;
+  font-size:22px;
+  font-weight:800;
+  text-align:center;
+  border:1px solid #ccc;
+  border-radius:6px;
+  padding:2px 4px;
+}
+.total-range{
+  font-size:13px;
+  font-weight:700;
+  color:#000;
+  height:18px;
+  opacity:1;
+  transition:opacity 0.3s ease;
+}
+.total-range.fade-out { opacity:0; }
+.slider-group{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  align-items:center;
+  margin-top:6px;
+}
+.slider-row{
+  display:grid;
+  grid-template-columns:55px 1fr 70px;
+  align-items:center;
+  width:100%;
+  max-width:500px;
+  gap:6px;
+}
+label{
+  font-size:15px;
+  font-weight:700;
+  color:#000;
+  grid-column:1 / span 3;
+  text-align:left;
+}
+input[type="range"]{
+  -webkit-appearance:none;
+  width:100%;
+  height:var(--track-height);
+  background:transparent;
+  margin:6px 0;
+}
+input[type="range"]::-webkit-slider-runnable-track{
+  height:var(--track-height);
+  border-radius:999px;
+  background:linear-gradient(to right, red, yellow, green);
+  transition:background 0.3s ease;
+}
+input[type="range"]::-moz-range-track{
+  height:var(--track-height);
+  border-radius:999px;
+  background:linear-gradient(to right, red, yellow, green);
+  transition:background 0.3s ease;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:var(--thumb-size);
+  height:var(--thumb-size);
+  margin-top:calc((var(--track-height)-var(--thumb-size))/2);
+  border-radius:50%;
+  background:#333;
+  border:3px solid white;
+  box-shadow:0 2px 6px rgba(0,0,0,0.25);
+  transition:transform .08s ease;
+}
+input[type="range"]:active::-webkit-slider-thumb{transform:scale(0.95);}
+input[type="range"]::-moz-range-thumb{
+  width:var(--thumb-size);
+  height:var(--thumb-size);
+  border-radius:50%;
+  background:#333;
+  border:3px solid white;
+  box-shadow:0 2px 6px rgba(0,0,0,0.25);
+}
+.tick-container{
+  position:relative;
+  width:100%;
+  height:8px;
+}
+.tick{
+  position:absolute;
+  top:0;
+  width:2px;
+  height:8px;
+  background:#ccc;
+  transform:translateX(-1px);
+}
+.categories{
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  color:#000;
+  font-weight:600;
+  margin-top:3px;
+}
+.categories span{
+  flex:1;
+  text-align:center;
+}
+@media (max-width:460px){
+  .categories span::after{content:attr(data-short);}
+}
+@media (min-width:461px){
+  .categories span::after{content:attr(data-full);}
+}
+.value-stack{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.value-box{
+  font-weight:700;
+  font-size:18px;
+  background:#f3f5f9;
+  border:1px solid #e6e9f0;
+  border-radius:6px;
+  padding:4px 8px;
+  min-width:60px;
+  text-align:center;
+}
+.range-text{
+  font-size:11px;
+  margin-top:2px;
+  font-weight:700;
+  color:#000;
+  height:14px;
+}
+@media (max-width:420px){
+  .range-text::after{content:attr(data-short);}
+}
+@media (min-width:421px){
+  .range-text::after{content:attr(data-full);}
+}
+.arrow-controls{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.arrow-btn{
+  background:#f3f5f9;
+  border:1px solid #d9dee7;
+  border-radius:5px;
+  font-size:16px;
+  width:30px;
+  height:30px;
+  line-height:28px;
+  cursor:pointer;
+  user-select:none;
+}
+.arrow-btn:hover{background:#eaf1ff;}
+.arrow-btn:active{background:#dce8ff;}
+.footer{
+  margin-top:20px;
+  font-size:12px;
+  text-align:center;
+}
+.footer a{
+  color:#0000ee;
+  text-decoration:none;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="total-row">
+    Base Score = 
+    <input type="text" id="baseScore" value="10.0"/>
+    <div class="arrow-controls">
+      <button class="arrow-btn" data-target="baseScore" data-dir="up">▲</button>
+      <button class="arrow-btn" data-target="baseScore" data-dir="down">▼</button>
+    </div>
+  </div>
+  <div class="total-range" id="totalRange"></div>
+
+  <div class="slider-group">
+
+    <div class="slider-row">
+      <label for="slider1">Carving</label>
+      <div class="arrow-controls">
+        <button class="arrow-btn" data-target="slider1" data-dir="up">▲</button>
+        <button class="arrow-btn" data-target="slider1" data-dir="down">▼</button>
+      </div>
+      <div class="slider-stack">
+        <input id="slider1" type="range" min="0" max="10" step="0.1" value="5"/>
+        <div class="tick-container" data-for="slider1"></div>
+        <div class="categories">
+          <span data-full="Poor" data-short="P"></span>
+          <span data-full="Managing" data-short="M"></span>
+          <span data-full="Adequate" data-short="A"></span>
+          <span data-full="Good" data-short="G"></span>
+          <span data-full="Excellent" data-short="E"></span>
+        </div>
+      </div>
+      <div class="value-stack">
+        <div class="value-box" id="val1">5.0</div>
+        <div class="range-text" id="range1" data-full="" data-short=""></div>
+      </div>
+    </div>
+
+    <div class="slider-row">
+      <label for="slider2">Abs/Ext</label>
+      <div class="arrow-controls">
+        <button class="arrow-btn" data-target="slider2" data-dir="up">▲</button>
+        <button class="arrow-btn" data-target="slider2" data-dir="down">▼</button>
+      </div>
+      <div class="slider-stack">
+        <input id="slider2" type="range" min="0" max="5" step="0.1" value="2.5"/>
+        <div class="tick-container" data-for="slider2"></div>
+        <div class="categories">
+          <span data-full="Poor" data-short="P"></span>
+          <span data-full="Managing" data-short="M"></span>
+          <span data-full="Adequate" data-short="A"></span>
+          <span data-full="Good" data-short="G"></span>
+          <span data-full="Excellent" data-short="E"></span>
+        </div>
+      </div>
+      <div class="value-stack">
+        <div class="value-box" id="val2">2.5</div>
+        <div class="range-text" id="range2" data-full="" data-short=""></div>
+      </div>
+    </div>
+
+    <div class="slider-row">
+      <label for="slider3">Upper Body</label>
+      <div class="arrow-controls">
+        <button class="arrow-btn" data-target="slider3" data-dir="up">▲</button>
+        <button class="arrow-btn" data-target="slider3" data-dir="down">▼</button>
+      </div>
+      <div class="slider-stack">
+        <input id="slider3" type="range" min="0" max="5" step="0.1" value="2.5"/>
+        <div class="tick-container" data-for="slider3"></div>
+        <div class="categories">
+          <span data-full="Poor" data-short="P"></span>
+          <span data-full="Managing" data-short="M"></span>
+          <span data-full="Adequate" data-short="A"></span>
+          <span data-full="Good" data-short="G"></span>
+          <span data-full="Excellent" data-short="E"></span>
+        </div>
+      </div>
+      <div class="value-stack">
+        <div class="value-box" id="val3">2.5</div>
+        <div class="range-text" id="range3" data-full="" data-short=""></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="footer">
+    <a href="https://freedogski.github.io/basescore/" target="_blank">https://freedogski.github.io/basescore/</a>
+  </div>
+</div>
+
+<script>
+(function(){
+const sliders=[
+  {el:slider1,val:val1,range:range1,max:10},
+  {el:slider2,val:val2,range:range2,max:5},
+  {el:slider3,val:val3,range:range3,max:5}
+];
+const baseInput=document.getElementById('baseScore');
+const totalRange=document.getElementById('totalRange');
+const round1=x=>Math.round(x*10)/10;
+
+function categoryText(v,max){
+  let category,low,high;
+  if(max===10){
+    if(v<=2.0){category="Poor";low=0;high=2.0;}
+    else if(v<=4.0){category="Managing";low=2.1;high=4.0;}
+    else if(v<=6.0){category="Adequate";low=4.1;high=6.0;}
+    else if(v<=8.0){category="Good";low=6.1;high=8.0;}
+    else {category="Excellent";low=8.1;high=10.0;}
+    const values=[];for(let x=low;x<=high+0.0001;x+=0.1)values.push(round1(x));
+    const len=values.length;let cut1,cut2;
+    if(category==="Good"||category==="Excellent"){cut1=Math.min(len,6);cut2=Math.min(len,cut1+7);}
+    else{cut1=Math.floor(len/3);cut2=Math.floor(len*2/3);}
+    const lowEnd=values[cut1-1]??low, midEnd=values[cut2-1]??high;
+    return {level:v<=lowEnd?"Low":v<=midEnd?"Mid":"High",category};
+  }else{
+    if(v<=1.0){category="Poor";low=0;high=1.0;}
+    else if(v<=2.0){category="Managing";low=1.1;high=2.0;}
+    else if(v<=3.0){category="Adequate";low=2.1;high=3.0;}
+    else if(v<=4.0){category="Good";low=3.1;high=4.0;}
+    else {category="Excellent";low=4.1;high=5.0;}
+    const values=[];for(let x=low;x<=high+0.0001;x+=0.1)values.push(round1(x));
+    const len=values.length;let cut1,cut2;
+    if(category==="Good"||category==="Excellent"){cut1=3;cut2=6;}
+    else{cut1=Math.floor(len/3);cut2=Math.floor(len*2/3);}
+    const lowEnd=values[cut1-1]??low, midEnd=values[cut2-1]??high;
+    return {level:v<=lowEnd?"Low":v<=midEnd?"Mid":"High",category};
+  }
+}
+
+function totalCategoryText(total){
+  if(total<=0) return "";
+  let category,low,high;
+  if(total<=4.0){category="Poor";low=0.1;high=4.0;}
+  else if(total<=8.0){category="Managing";low=4.1;high=8.0;}
+  else if(total<=12.0){category="Adequate";low=8.1;high=12.0;}
+  else if(total<=16.0){category="Good";low=12.1;high=16.0;}
+  else {category="Excellent";low=16.1;high=20.0;}
+  const values=[];for(let x=low;x<=high+0.0001;x+=0.1)values.push(round1(x));
+  const cut1=13,cut2=26;
+  const lowEnd=values[cut1-1]??low, midEnd=values[cut2-1]??high;
+  const level=total<=lowEnd?"Low":total<=midEnd?"Mid":"High";
+  return `${level}-${category}`;
+}
+
+function sliderColor(v,max){
+  const pct=v/max;
+  let r,g;
+  if(pct<=0.5){
+    r=255; g=Math.round(510*pct);
+  }else{
+    g=255; r=Math.round(510*(1-pct));
+  }
+  return `rgb(${r},${g},0)`;
+}
+
+let lastTotalText="";
+function updateFromSliders(){
+  let total=0;
+  sliders.forEach(({el,val,range,max})=>{
+    const v=round1(parseFloat(el.value));
+    val.textContent=v.toFixed(1);
+    total+=v;
+    if(v===0){
+      range.setAttribute("data-full","");
+      range.setAttribute("data-short","");
+    } else {
+      const {level,category}=categoryText(v,max);
+      range.setAttribute("data-full",`${level}-${category}`);
+      range.setAttribute("data-short",`${level}-${category[0]}`);
+    }
+    el.style.background=`linear-gradient(to right, red, yellow, green)`;
+  });
+  const t=round1(total);
+  baseInput.value=t.toFixed(1);
+  const text=total>0?totalCategoryText(t):"";
+  if(text!==lastTotalText){
+    totalRange.classList.add("fade-out");
+    setTimeout(()=>{totalRange.textContent=text;totalRange.classList.remove("fade-out");},150);
+    lastTotalText=text;
+  }
+}
+
+function updateSlidersFromBase(){
+  let v=parseFloat(baseInput.value.replace(',', '.'))||0;
+  v=Math.max(0,Math.min(20,v));
+  let c=round1(v*0.5), a=round1(v*0.25), u=round1(v*0.25);
+  // adjust for rounding error
+  let sum=c+a+u, diff=round1(v-sum);
+  c+=diff; 
+  sliders[0].el.value=c.toFixed(1);
+  sliders[1].el.value=a.toFixed(1);
+  sliders[2].el.value=u.toFixed(1);
+  updateFromSliders();
+}
+
+sliders.forEach(({el})=>{
+  el.addEventListener('input',updateFromSliders);
+  el.addEventListener('change',updateFromSliders);
+});
+
+document.querySelectorAll('.arrow-btn').forEach(btn=>{
+  let timer,interval;
+  const stepAction=()=>{
+    const target=document.getElementById(btn.dataset.target);
+    const dir=btn.dataset.dir;
+    const step=parseFloat(target.step)||0.1;
+    let val=parseFloat(target.value.replace(',','.'))||0;
+    val+=dir==="up"?step:-step;
+    val=Math.round(val*10)/10;
+    if(target===baseInput){baseInput.value=val.toFixed(1); updateSlidersFromBase();}
+    else {target.value=val.toFixed(1); updateFromSliders();}
+  };
+  const startHold=()=>{stepAction(); timer=setTimeout(()=>interval=setInterval(stepAction,100),300);}
+  const stopHold=()=>{clearTimeout(timer);clearInterval(interval);}
+  btn.addEventListener('mousedown',startHold);
+  btn.addEventListener('mouseup',stopHold);
+  btn.addEventListener('mouseleave',stopHold);
+  btn.addEventListener('touchstart',e=>{e.preventDefault();startHold();},{passive:false});
+  btn.addEventListener('touchend',stopHold);
+  btn.addEventListener('touchcancel',stopHold);
+});
+
+baseInput.addEventListener('change',updateSlidersFromBase);
+baseInput.addEventListener('input',()=>{
+  baseInput.value=baseInput.value.replace(',', '.');
+});
+
+document.querySelectorAll('.tick-container').forEach(tc=>{
+  for(let i=0;i<=5;i++){
+    const tick=document.createElement('div');
+    tick.className='tick';
+    tick.style.left=(i*20)+'%';
+    tc.appendChild(tick);
+  }
+});
+
+updateFromSliders();
+})();
+</script>
+</body>
+</html>
