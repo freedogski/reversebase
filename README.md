@@ -22,32 +22,35 @@ Final Implementation Summary
 
 🟦 Base Score
 Inline format:
-Base Score = [editable box] [▲ ▼ arrows]
-Editable (dot/comma accepted → always shows dot).
-Category text below with fade animation:
+- Base Score = [editable box] [▲ ▼ arrows]
+- Editable (dot/comma accepted → always shows dot).
+- Category text below with fade animation:
+
 Ranges:
-Poor: 0.1–4.0
-Managing: 4.1–8.0
-Adequate: 8.1–12.0
-Good: 12.1–16.0
-Excellent: 16.1–20.0
+- Poor: 0.1–4.0
+- Managing: 4.1–8.0
+- Adequate: 8.1–12.0
+- Good: 12.1–16.0
+- Excellent: 16.1–20.0
+
 Low / Mid / High within each range (13/13/14 segments).
+
 No text shown when value = 0.
+
 Two-way linking:
-Editing Base Score → redistributes to sliders (Carving 50%, Abs/Ext 25%, Upper 25%; rounding to Carving).
-Moving any slider → recalculates Base Score instantly.
-Large external ▲▼ arrows with long-press repeat.
-Tick marks shown on Base Score (like sliders).
+- Editing Base Score → redistributes to sliders (Carving 50%, Abs/Ext 25%, Upper 25%; rounding to Carving).
+- Moving any slider → recalculates Base Score instantly.
+- Large external ▲▼ arrows with long-press repeat.
+- Tick marks shown on Base Score (like sliders).
 
 🟩 Sliders (Carving / Abs-Ext / Upper Body)
-Identical layout/functionality to your reference.
-Gradient (red → yellow → green) background height = ~80 % of value box height (thicker than current).
-Tick marks + category labels retained.
+- Identical layout/functionality to your reference.
+- Gradient (red → yellow → green) background height = ~80 % of value box height (thicker than current).
+- Tick marks + category labels retained.
 
 🟨 Display
-Decimal shown with a dot, commas auto-converted.
-Smooth fade animation when Base Score category changes.
+- Decimal shown with a dot, commas auto-converted.
+- Smooth fade animation when Base Score category changes.
 
 🟪 Footer
-Centered small text link at bottom:
-🔗 https://freedogski.github.io/basescore/
+- Centered small text link at bottom:  🔗 https://freedogski.github.io/basescore/
