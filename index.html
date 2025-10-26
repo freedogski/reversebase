@@ -298,6 +298,17 @@ input[type="range"]::-moz-range-thumb{
 </div>
 
 <script>
+// --- Shared BaseScore Storage ---
+function saveBaseScore(value) {
+  localStorage.setItem("BaseScore", value);
+}
+
+function loadBaseScore() {
+  return localStorage.getItem("BaseScore") || 0;
+}
+</script>
+  
+<script>
 (function(){
 const sliders=[
   {el:slider1,val:val1,range:range1,max:10},
