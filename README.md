@@ -19,6 +19,7 @@ Alternatively there is a simplified tool here that just takes entery for each of
 
 
 Final Implementation Summary
+
 🟦 Base Score
 Inline format:
 Base Score = [editable box] [▲ ▼ arrows]
